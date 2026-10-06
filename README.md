@@ -20,8 +20,8 @@ Custom ROM hub for Android devices
 
 ## Screenshots
 
-![App Screenshot](Screenshot_20261006_165032_ForgeROM.jpg)
-![App Screenshot](Screenshot_20261006_165043_ForgeROM.jpg)
+![Main Menu Screenshot](Main_ss.jpg)
+![Settings Screenshot](Settings_ss.jpg)
 
 
 ## Installation

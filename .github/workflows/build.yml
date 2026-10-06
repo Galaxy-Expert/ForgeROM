@@ -3,37 +3,130 @@ name: Build APK
 on:
   push:
     branches: [main]
+    paths-ignore:
+      - "**.md"
+      - "LICENSE"
+      - "Banner.png"
+      - "*.jpg"
   workflow_dispatch:
+    inputs:
+      release:
+        description: "Also publish the APK as a GitHub Release"
+        type: boolean
+        default: false
+
+permissions:
+  contents: write
 
 jobs:
   build:
+    name: Build
     runs-on: ubuntu-24.04
     steps:
-      - uses: actions/checkout@v4
+      - name: Check out repository
+        uses: actions/checkout@v4
 
-      - name: Projeyi zip'ten çıkar
+      - name: Extract project from ForgeROM.zip
         run: unzip -q ForgeROM.zip -d work
 
-      - name: Özel ikonları uygula (varsa)
+      - name: Apply custom icons (if present)
         run: |
           D=work/ForgeROM/app/src/main/res/drawable-xxxhdpi
-          [ -f icon_foreground.png ] && cp icon_foreground.png $D/ic_launcher_foreground.png || true
-          [ -f icon_background.png ] && cp icon_background.png $D/ic_launcher_background.png || true
+          [ -f app/images/icon_foreground.png ] && cp app/images/icon_foreground.png $D/ic_launcher_foreground.png || true
+          [ -f app/images/icon_background.png ] && cp app/images/icon_background.png $D/ic_launcher_background.png || true
 
-      - uses: actions/setup-java@v5
+      - name: Merge community strings (app/strings)
+        run: |
+          python3 - <<'PY'
+          import os, shutil
+          import xml.etree.ElementTree as ET
+
+          SRC = "app/strings"
+          DST = "work/ForgeROM/app/src/main/res"
+          if not os.path.isdir(SRC):
+              raise SystemExit("No app/strings folder, nothing to merge")
+
+          for folder in sorted(os.listdir(SRC)):
+              if not folder.startswith("values"):
+                  continue
+              src = os.path.join(SRC, folder, "strings.xml")
+              if not os.path.isfile(src) or os.path.getsize(src) == 0:
+                  print(f"skip {folder}: no strings.xml")
+                  continue
+              try:
+                  src_tree = ET.parse(src)
+              except ET.ParseError as e:
+                  print(f"::warning::{src} is not valid XML ({e}), skipped")
+                  continue
+
+              dst_dir = os.path.join(DST, folder)
+              dst = os.path.join(dst_dir, "strings.xml")
+              os.makedirs(dst_dir, exist_ok=True)
+              if not os.path.isfile(dst):
+                  shutil.copy(src, dst)
+                  print(f"added new language folder: {folder}")
+                  continue
+
+              # Existing language: keys from the repo override the zip, missing keys fall back to the zip.
+              dst_tree = ET.parse(dst)
+              dst_root = dst_tree.getroot()
+              by_name = {el.get("name"): el for el in dst_root.findall("string")}
+              count = 0
+              for el in src_tree.getroot().findall("string"):
+                  name = el.get("name")
+                  if name in by_name:
+                      by_name[name].text = el.text
+                  else:
+                      dst_root.append(el)
+                  count += 1
+              dst_tree.write(dst, encoding="utf-8", xml_declaration=True)
+              print(f"merged {count} strings into {folder}")
+          PY
+
+      - name: Read app version
+        id: ver
+        run: |
+          VER=$(grep -oP 'versionName = "\K[^"]+' work/ForgeROM/app/build.gradle.kts)
+          echo "version=$VER" >> "$GITHUB_OUTPUT"
+          echo "Version: $VER"
+
+      - name: Set up Java 17
+        uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
-      - uses: gradle/actions/setup-gradle@v4
+      - name: Set up Gradle
+        uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.11.1
 
-      - name: APK derle
+      - name: Build debug APK
         working-directory: work/ForgeROM
         run: gradle assembleDebug --no-daemon
 
-      - uses: actions/upload-artifact@v4
+      - name: Name the APK
+        run: |
+          mkdir -p dist
+          cp work/ForgeROM/app/build/outputs/apk/debug/app-debug.apk "dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
+
+      # Note: GitHub always delivers artifacts as a .zip from the Actions page.
+      # For a bare .apk download, use the Release option below.
+      - name: Upload APK artifact
+        uses: actions/upload-artifact@v4
         with:
-          name: ForgeROM-debug-apk
-          path: work/ForgeROM/app/build/outputs/apk/debug/app-debug.apk
+          name: ForgeROM_${{ steps.ver.outputs.version }}
+          path: dist/ForgeROM_${{ steps.ver.outputs.version }}.apk
+
+      - name: Publish GitHub Release
+        if: ${{ github.event_name == 'workflow_dispatch' && inputs.release }}
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          TAG="v${{ steps.ver.outputs.version }}"
+          APK="dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
+          if gh release view "$TAG" >/dev/null 2>&1; then
+            gh release upload "$TAG" "$APK" --clobber
+          else
+            gh release create "$TAG" "$APK" --title "ForgeROM ${{ steps.ver.outputs.version }}" --prerelease --generate-notes
+          fi

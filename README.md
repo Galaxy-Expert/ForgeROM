@@ -11,7 +11,7 @@ Custom ROM hub for Android devices
 
 - Translatable Strings
 - Built on SDK 26 (Android 8)
-- Most of development is making by Claude Sonnet 5.5
+- Most of the development is driven by Claude Sonnet 5.5
 - Auto model detection and manuel selector
 - AI Built-in (needs API key) suggestor and helper (There is a free alternative)
 - Root mode for auto installing
@@ -26,7 +26,7 @@ Custom ROM hub for Android devices
 
 ## Installation
 
-Installation is easy, this project is already builded by GitHub Actions.
+Installation is easy, This project is automatically built by GitHub Actions CI/CD.
 
 1. Download latest.apk from Releases
 2. Install the app-debug.apk file

@@ -10,7 +10,7 @@ Custom ROM hub for Android devices
 ## Features
 
 - Translatable Strings
-- Built on SDK-8 (Android 8)
+- Built on SDK 26 (Android 8)
 - Most of development is making by Claude Sonnet 5.5
 - Auto model detection and manuel selector
 - AI Built-in (needs API key) suggestor and helper (There is a free alternative)

@@ -7,7 +7,7 @@ on:
 
 jobs:
   build:
-    runs-on: ubuntu-latest
+    runs-on: ubuntu-24.04
     steps:
       - uses: actions/checkout@v4
 
@@ -20,14 +20,14 @@ jobs:
           [ -f icon_foreground.png ] && cp icon_foreground.png $D/ic_launcher_foreground.png || true
           [ -f icon_background.png ] && cp icon_background.png $D/ic_launcher_background.png || true
 
-      - uses: actions/setup-java@v4
+      - uses: actions/setup-java@v5
         with:
           distribution: temurin
           java-version: 17
 
       - uses: gradle/actions/setup-gradle@v4
         with:
-          gradle-version: 8.10.2
+          gradle-version: 8.11.1
 
       - name: APK derle
         working-directory: work/ForgeROM

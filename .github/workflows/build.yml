@@ -101,14 +101,37 @@ jobs:
         with:
           gradle-version: 8.11.1
 
-      - name: Build debug APK
+      - name: Prepare signing key (if the secrets are set)
+        env:
+          KEYSTORE_B64: ${{ secrets.SIGNING_KEYSTORE_BASE64 }}
+        run: |
+          if [ -n "$KEYSTORE_B64" ]; then
+            echo "$KEYSTORE_B64" | base64 -d > "$RUNNER_TEMP/forgerom.jks"
+            echo "SIGNING_KEYSTORE_PATH=$RUNNER_TEMP/forgerom.jks" >> "$GITHUB_ENV"
+            echo "Signing with the ForgeROM release key"
+          else
+            echo "::warning::No signing secrets found, falling back to the debug key"
+          fi
+
+      - name: Build release APK
         working-directory: work/ForgeROM
-        run: gradle assembleDebug --no-daemon
+        env:
+          SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
+        run: gradle assembleRelease --no-daemon
+
+      - name: Show signing certificate
+        run: |
+          APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -n 1)
+          if [ -n "$APKSIGNER" ]; then
+            "$APKSIGNER" verify --print-certs work/ForgeROM/app/build/outputs/apk/release/app-release.apk | grep -E "Signer #1 certificate (DN|SHA-256)" || true
+          else
+            echo "apksigner not found, skipping"
+          fi
 
       - name: Name the APK
         run: |
           mkdir -p dist
-          cp work/ForgeROM/app/build/outputs/apk/debug/app-debug.apk "dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
+          cp work/ForgeROM/app/build/outputs/apk/release/app-release.apk "dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
 
       # Note: GitHub always delivers artifacts as a .zip from the Actions page.
       # For a bare .apk download, use the Release option below.

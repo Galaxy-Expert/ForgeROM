@@ -15,7 +15,7 @@ Custom ROM hub for Android devices
 - Auto model detection and manuel selector
 - AI Built-in (needs API key) suggestor and helper (There is a free alternative)
 - Root mode for auto installing
-- Light/Dark Mode (coming soon)
+- Light/Dark Mode
 
 
 ## Screenshots

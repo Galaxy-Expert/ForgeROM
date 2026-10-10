@@ -83,6 +83,42 @@ jobs:
               print(f"merged {count} strings into {folder}")
           PY
 
+      - name: Generate language list from values-xx folders
+        run: |
+          python3 - <<'PY'
+          import os, re
+
+          RES = "work/ForgeROM/app/src/main/res"
+          tags = ["en"]
+          for folder in sorted(os.listdir(RES)):
+              m = re.fullmatch(r"values-(b\+[A-Za-z0-9+]+|[a-z]{2,3}(?:-r[A-Z]{2})?)", folder)
+              if not m or not os.path.isfile(os.path.join(RES, folder, "strings.xml")):
+                  continue
+              q = m.group(1)
+              # values-pt-rBR -> pt-BR, values-b+sr+Latn -> sr-Latn
+              tag = q[2:].replace("+", "-") if q.startswith("b+") else q.replace("-r", "-")
+              if tag not in tags:
+                  tags.append(tag)
+
+          tags = ["en"] + sorted(t for t in tags if t != "en")
+
+          with open(os.path.join(RES, "xml", "locales_config.xml"), "w", encoding="utf-8") as f:
+              f.write('<?xml version="1.0" encoding="utf-8"?>\n')
+              f.write('<locale-config xmlns:android="http://schemas.android.com/apk/res/android">\n')
+              for t in tags:
+                  f.write(f'    <locale android:name="{t}" />\n')
+              f.write('</locale-config>\n')
+
+          with open(os.path.join(RES, "values", "supported_languages.xml"), "w", encoding="utf-8") as f:
+              f.write('<?xml version="1.0" encoding="utf-8"?>\n<resources>\n')
+              f.write('    <string-array name="supported_languages" translatable="false">\n')
+              for t in tags:
+                  f.write(f'        <item>{t}</item>\n')
+              f.write('    </string-array>\n</resources>\n')
+
+          print("Languages:", ", ".join(tags))
+          PY
+
       - name: Read app version
         id: ver
         run: |

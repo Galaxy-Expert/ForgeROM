@@ -1,44 +1,40 @@
-
 ![Logo](Banner.png)
 
+# ForgeROM (Work in Progress)
 
-# ForgeROM (Work-in-Progress)
-
-Custom ROM hub for Android devices
-
+Custom ROM hub for Android devices.
 
 ## Features
 
-- Translatable Strings
-- Built on SDK 26 (Android 8)
-- Most of the development is driven by Claude Sonnet 5.5
-- Auto model detection and manuel selector
-- AI Built-in (needs API key) suggestor and helper (There is a free alternative)
-- Root mode for auto installing
-- Light/Dark Mode
-
+- Translatable strings
+- Built on SDK 26 (Android 8.0+)
+- Most development is powered by Claude Sonnet 5.5
+- Automatic model detection with manual selection
+- Built-in AI assistant and suggester (API key required; a free alternative is available)
+- Root mode for automatic installation
+- Light / Dark mode
+- Open-source project
 
 ## Screenshots
 
 ![Main Menu Screenshot](Main_ss.jpg)
 ![Settings Screenshot](Settings_ss.jpg)
 
-
 ## Installation
 
-Installation is easy, This project is automatically built by GitHub Actions CI/CD.
+This project is built automatically with GitHub Actions CI/CD.
 
-1. Download latest.apk from Releases
-2. Install the app-debug.apk file
-3. If any security problem appears (like Google Play), continue anyway. This is an %100 open source and safe project. The reason it is issuing warnings is that I haven't made the necessary adjustments yet.
+1. Download the latest APK from the Releases section.
+2. Install the APK on your device.
+3. If a security warning appears, tap "Install anyway".
+4. This project is 100% open source and safe. The warning is usually shown because the app is not signed with Google Play certificates.
 
-    
 ## License
 
-This project is protected by the GNU General Public License!
-
+This project is licensed under the GNU General Public License.
 
 ## Support and Author
 
-- Made idea by me, Galaxy Expert (Muratcan Yücepur)
-- Report all issues to GitHub or XDA, also you can do pull requests.
+- Created by Galaxy Expert (Muratcan Yücepur)
+- Report bugs or issues on GitHub or XDA
+- Contributions and pull requests are welcome

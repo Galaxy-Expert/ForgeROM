@@ -38,3 +38,4 @@ This project is licensed under the GNU General Public License.
 - Created by Galaxy Expert (Muratcan Yücepur)
 - Report bugs or issues on GitHub or XDA
 - Contributions and pull requests are welcome
+- Support me with subscribing to [my YouTube channel](https://youtube.com/@galaxy_expert?si=LgdLLOAN8-JTZGSC)

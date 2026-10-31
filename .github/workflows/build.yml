@@ -119,6 +119,49 @@ jobs:
           print("Languages:", ", ".join(tags))
           PY
 
+      - name: Check string resources
+        run: |
+          python3 - <<'PY'
+          import glob, re, sys
+          import xml.dom.minidom as minidom
+
+          ROOT = "work/ForgeROM/app/src/main"
+          errors = []
+
+          def names(path):
+              return set(re.findall(r'<string name="([^"]+)"', open(path, encoding="utf-8").read()))
+
+          for f in glob.glob(ROOT + "/res/**/*.xml", recursive=True):
+              try:
+                  minidom.parse(f)
+              except Exception as e:
+                  errors.append(f"{f}: invalid XML ({e})")
+
+          english = names(ROOT + "/res/values/strings.xml")
+          used = set()
+          for f in glob.glob(ROOT + "/java/**/*.kt", recursive=True):
+              used |= set(re.findall(r"R\.string\.([A-Za-z0-9_]+)", open(f, encoding="utf-8").read()))
+          missing = sorted(used - english)
+          if missing:
+              errors.append("used in code but missing from values/strings.xml: " + ", ".join(missing))
+
+          for f in glob.glob(ROOT + "/res/values*/strings.xml"):
+              text = open(f, encoding="utf-8").read()
+              for name, value in re.findall(r'<string name="([^"]+)"[^>]*>([^<]*)</string>', text):
+                  if value[:1] in ("?", "@"):
+                      errors.append(f"{f}: '{name}' starts with ? or @ (escape it with a backslash)")
+                  if not value.startswith('"') and re.search(r"(?<!\\)'", value):
+                      errors.append(f"{f}: '{name}' has an unescaped apostrophe (use \\')")
+              if "/values-" in f:
+                  lacking = sorted(english - names(f) - {"app_name", "version_label"})
+                  if lacking:
+                      print(f"::warning::{f} lacks {len(lacking)} strings, they fall back to English")
+
+          for e in errors:
+              print(f"::error::{e}")
+          sys.exit(1 if errors else 0)
+          PY
+
       - name: Read app version
         id: ver
         run: |
@@ -136,6 +179,11 @@ jobs:
         uses: gradle/actions/setup-gradle@v4
         with:
           gradle-version: 8.11.1
+
+      - name: Run unit tests (does not block the build)
+        working-directory: work/ForgeROM
+        continue-on-error: true
+        run: gradle testDebugUnitTest --no-daemon
 
       - name: Prepare signing key (if the secrets are set)
         env:

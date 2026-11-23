@@ -18,6 +18,10 @@ on:
 permissions:
   contents: write
 
+concurrency:
+  group: build-${{ github.ref }}
+  cancel-in-progress: false
+
 jobs:
   build:
     name: Build
@@ -26,69 +30,163 @@ jobs:
       - name: Check out repository
         uses: actions/checkout@v4
 
-      - name: Extract project from ForgeROM.zip
-        run: unzip -q ForgeROM.zip -d work
-
-      - name: Apply custom icons (if present)
+      # If ForgeROM.zip is in the repository root, unpack it over the sources, commit, and delete the zip.
+      # Nothing else is ever deleted. README, LICENSE, .github and app/images are never overwritten.
+      - name: Import project from ForgeROM.zip (if present)
+        env:
+          BRANCH: ${{ github.ref_name }}
         run: |
-          D=work/ForgeROM/app/src/main/res/drawable-xxxhdpi
-          [ -f app/images/icon_foreground.png ] && cp app/images/icon_foreground.png $D/ic_launcher_foreground.png || true
-          [ -f app/images/icon_background.png ] && cp app/images/icon_background.png $D/ic_launcher_background.png || true
-
-      - name: Merge community strings (app/strings)
-        run: |
+          if [ ! -f ForgeROM.zip ]; then
+            echo "No ForgeROM.zip, building the sources that are already in the repository"
+            exit 0
+          fi
+          rm -rf "$RUNNER_TEMP/import"
+          mkdir -p "$RUNNER_TEMP/import"
+          unzip -q ForgeROM.zip -d "$RUNNER_TEMP/import"
           python3 - <<'PY'
-          import os, shutil
+          import os, re, shutil
           import xml.etree.ElementTree as ET
 
-          SRC = "app/strings"
-          DST = "work/ForgeROM/app/src/main/res"
-          if not os.path.isdir(SRC):
-              raise SystemExit("No app/strings folder, nothing to merge")
+          SRC_ROOT = os.path.join(os.environ["RUNNER_TEMP"], "import")
+          entries = os.listdir(SRC_ROOT)
+          if len(entries) == 1 and os.path.isdir(os.path.join(SRC_ROOT, entries[0])):
+              SRC_ROOT = os.path.join(SRC_ROOT, entries[0])   # the zip has one top-level folder
 
-          for folder in sorted(os.listdir(SRC)):
-              if not folder.startswith("values"):
-                  continue
-              src = os.path.join(SRC, folder, "strings.xml")
-              if not os.path.isfile(src) or os.path.getsize(src) == 0:
-                  print(f"skip {folder}: no strings.xml")
-                  continue
-              try:
-                  src_tree = ET.parse(src)
-              except ET.ParseError as e:
-                  print(f"::warning::{src} is not valid XML ({e}), skipped")
-                  continue
+          PROTECTED_DIRS = (".github/", "app/images/", "app/strings/")
+          PROTECTED_FILES = {"LICENSE", "Banner.png"}
+          KEEP_IF_EXISTS = {
+              "README.md",
+              "app/src/main/res/drawable-xxxhdpi/ic_launcher_foreground.png",
+              "app/src/main/res/drawable-xxxhdpi/ic_launcher_background.png",
+          }
+          STRINGS = re.compile(r"app/src/main/res/values[^/]*/strings\.xml")
 
-              dst_dir = os.path.join(DST, folder)
-              dst = os.path.join(dst_dir, "strings.xml")
-              os.makedirs(dst_dir, exist_ok=True)
-              if not os.path.isfile(dst):
-                  shutil.copy(src, dst)
-                  print(f"added new language folder: {folder}")
-                  continue
-
-              # Existing language: keys from the repo override the zip, missing keys fall back to the zip.
+          def merge_missing_keys(src, dst):
+              """Keep the strings already in the repository, add only the keys that are missing."""
               dst_tree = ET.parse(dst)
-              dst_root = dst_tree.getroot()
-              by_name = {el.get("name"): el for el in dst_root.findall("string")}
-              count = 0
-              for el in src_tree.getroot().findall("string"):
-                  name = el.get("name")
-                  if name in by_name:
-                      by_name[name].text = el.text
-                  else:
-                      dst_root.append(el)
-                  count += 1
-              dst_tree.write(dst, encoding="utf-8", xml_declaration=True)
-              print(f"merged {count} strings into {folder}")
+              root = dst_tree.getroot()
+              have = {el.get("name") for el in root.findall("string")}
+              added = 0
+              for el in ET.parse(src).getroot().findall("string"):
+                  if el.get("name") not in have:
+                      root.append(el)
+                      added += 1
+              if added:
+                  dst_tree.write(dst, encoding="utf-8", xml_declaration=True)
+              return added
+
+          def merge_gitignore(src, dst):
+              have = set(open(dst, encoding="utf-8").read().splitlines())
+              missing = [l for l in open(src, encoding="utf-8").read().splitlines()
+                         if l.strip() and not l.startswith("#") and l not in have]
+              if missing:
+                  with open(dst, "a", encoding="utf-8") as f:
+                      f.write("\n" + "\n".join(missing) + "\n")
+              return len(missing)
+
+          copied = kept = merged = 0
+          for base, _, files in os.walk(SRC_ROOT):
+              for name in files:
+                  src = os.path.join(base, name)
+                  rel = os.path.relpath(src, SRC_ROOT).replace(os.sep, "/")
+                  if rel.startswith(PROTECTED_DIRS) or rel in PROTECTED_FILES:
+                      kept += 1
+                      continue
+                  if rel in KEEP_IF_EXISTS and os.path.exists(rel):
+                      kept += 1
+                      continue
+                  if rel == ".gitignore" and os.path.exists(rel):
+                      merged += merge_gitignore(src, rel)
+                      continue
+                  if STRINGS.fullmatch(rel) and rel != "app/src/main/res/values/strings.xml" and os.path.exists(rel):
+                      merged += merge_missing_keys(src, rel)
+                      continue
+                  os.makedirs(os.path.dirname(rel) or ".", exist_ok=True)
+                  shutil.copyfile(src, rel)
+                  copied += 1
+          print(f"import finished: {copied} files copied, {kept} protected files left alone, {merged} missing entries merged")
           PY
+          VER=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts || echo "unknown")
+          git rm -q ForgeROM.zip
+          git add -A
+          git config user.name "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+          git commit -q -m "Import ForgeROM $VER from ForgeROM.zip"
+          for i in 1 2 3; do
+            git pull -q --rebase origin "$BRANCH" && git push -q origin "HEAD:$BRANCH" && break
+            sleep 3
+          done
+
+      - name: Apply custom icons and fit the foreground into the safe zone
+        run: |
+          python3 -c "import PIL" 2>/dev/null || python3 -m pip install --quiet --break-system-packages pillow
+          python3 - <<'PY'
+          import math, os, shutil, sys
+          from PIL import Image
+
+          SRC_FG = "app/images/icon_foreground.png"
+          SRC_BG = "app/images/icon_background.png"
+          DST = "app/src/main/res/drawable-xxxhdpi"
+          # Android shows only the middle of the icon (a circle of about 61% of the canvas is always visible).
+          # The farthest visible pixel of the foreground must stay within this fraction of the canvas from the centre.
+          TARGET = 0.28
+
+          if os.path.isfile(SRC_BG):
+              shutil.copy(SRC_BG, os.path.join(DST, "ic_launcher_background.png"))
+              print("background icon applied")
+
+          if not os.path.isfile(SRC_FG):
+              print("no custom foreground, using the template")
+              sys.exit(0)
+
+          img = Image.open(SRC_FG).convert("RGBA")
+          w, h = img.size
+          alpha = img.getchannel("A")
+          out = os.path.join(DST, "ic_launcher_foreground.png")
+
+          if alpha.getextrema()[0] == 255:
+              print("::warning::icon_foreground.png has no transparent pixels, so it cannot be fitted automatically. Use a transparent background.")
+              img.save(out)
+              sys.exit(0)
+
+          px = alpha.load()
+          cx, cy = w / 2, h / 2
+          far = 0.0
+          for y in range(h):
+              for x in range(w):
+                  if px[x, y] > 24:
+                      far = max(far, math.hypot(x + 0.5 - cx, y + 0.5 - cy))
+          if far == 0:
+              print("::warning::icon_foreground.png is fully transparent")
+              img.save(out)
+              sys.exit(0)
+
+          ratio = far / min(w, h)
+          print(f"foreground {w}x{h}: farthest visible pixel is at {ratio:.2f} of the canvas (limit {TARGET})")
+          if ratio > TARGET:
+              scale = TARGET / ratio
+              small = img.resize((max(1, round(w * scale)), max(1, round(h * scale))), Image.LANCZOS)
+              canvas = Image.new("RGBA", (w, h), (0, 0, 0, 0))
+              canvas.paste(small, ((w - small.width) // 2, (h - small.height) // 2), small)
+              img = canvas
+              print(f"scaled the symbol to {scale * 100:.0f}% so it stays inside the safe zone")
+          else:
+              print("already inside the safe zone, left unchanged")
+          img.save(out)
+          PY
+
+      - name: Upload icon preview (the layers exactly as used in the app)
+        uses: actions/upload-artifact@v4
+        with:
+          name: icon-preview
+          path: app/src/main/res/drawable-xxxhdpi/ic_launcher_*.png
 
       - name: Generate language list from values-xx folders
         run: |
           python3 - <<'PY'
           import os, re
 
-          RES = "work/ForgeROM/app/src/main/res"
+          RES = "app/src/main/res"
           tags = ["en"]
           for folder in sorted(os.listdir(RES)):
               m = re.fullmatch(r"values-(b\+[A-Za-z0-9+]+|[a-z]{2,3}(?:-r[A-Z]{2})?)", folder)
@@ -99,7 +197,6 @@ jobs:
               tag = q[2:].replace("+", "-") if q.startswith("b+") else q.replace("-r", "-")
               if tag not in tags:
                   tags.append(tag)
-
           tags = ["en"] + sorted(t for t in tags if t != "en")
 
           with open(os.path.join(RES, "xml", "locales_config.xml"), "w", encoding="utf-8") as f:
@@ -125,7 +222,7 @@ jobs:
           import glob, re, sys
           import xml.dom.minidom as minidom
 
-          ROOT = "work/ForgeROM/app/src/main"
+          ROOT = "app/src/main"
           errors = []
 
           def names(path):
@@ -165,7 +262,7 @@ jobs:
       - name: Read app version
         id: ver
         run: |
-          VER=$(grep -oP 'versionName = "\K[^"]+' work/ForgeROM/app/build.gradle.kts)
+          VER=$(grep -oP 'versionName = "\K[^"]+' app/build.gradle.kts)
           echo "version=$VER" >> "$GITHUB_OUTPUT"
           echo "Version: $VER"
 
@@ -181,7 +278,6 @@ jobs:
           gradle-version: 8.11.1
 
       - name: Run unit tests (does not block the build)
-        working-directory: work/ForgeROM
         continue-on-error: true
         run: gradle testDebugUnitTest --no-daemon
 
@@ -198,7 +294,6 @@ jobs:
           fi
 
       - name: Build release APK
-        working-directory: work/ForgeROM
         env:
           SIGNING_PASSWORD: ${{ secrets.SIGNING_PASSWORD }}
         run: gradle assembleRelease --no-daemon
@@ -207,7 +302,7 @@ jobs:
         run: |
           APKSIGNER=$(ls "$ANDROID_HOME"/build-tools/*/apksigner 2>/dev/null | sort -V | tail -n 1)
           if [ -n "$APKSIGNER" ]; then
-            "$APKSIGNER" verify --print-certs work/ForgeROM/app/build/outputs/apk/release/app-release.apk | grep -E "Signer #1 certificate (DN|SHA-256)" || true
+            "$APKSIGNER" verify --print-certs app/build/outputs/apk/release/app-release.apk | grep -E "Signer #1 certificate (DN|SHA-256)" || true
           else
             echo "apksigner not found, skipping"
           fi
@@ -215,7 +310,7 @@ jobs:
       - name: Name the APK
         run: |
           mkdir -p dist
-          cp work/ForgeROM/app/build/outputs/apk/release/app-release.apk "dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
+          cp app/build/outputs/apk/release/app-release.apk "dist/ForgeROM_${{ steps.ver.outputs.version }}.apk"
 
       # Note: GitHub always delivers artifacts as a .zip from the Actions page.
       # For a bare .apk download, use the Release option below.

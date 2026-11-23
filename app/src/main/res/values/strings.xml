@@ -1,0 +1,167 @@
+<?xml version="1.0" encoding="utf-8"?>
+<!--
+  ForgeROM - English (default) strings.
+  Translators: copy this file to values-<language code>/strings.xml and translate the text only.
+  Keep placeholders like %1$s and %2$d exactly as they are. Escape apostrophes as \'.
+  See TRANSLATING.md for the full steps.
+-->
+<resources>
+    <string name="app_name" translatable="false">ForgeROM</string>
+    <string name="version_label" translatable="false">0.5 Beta</string>
+
+    <!-- Common -->
+    <string name="hero_tagline">Custom ROM installation, made easier</string>
+    <string name="settings_title">Settings</string>
+    <string name="action_ok">OK</string>
+    <string name="action_back">← Back</string>
+    <string name="badge_mode_suggest">Suggestion mode</string>
+    <string name="badge_mode_root">Root mode</string>
+
+    <!-- Onboarding -->
+    <string name="onb_title">Welcome to ForgeROM</string>
+    <string name="onb_subtitle">Find the right custom ROM and recovery for your phone.</string>
+    <string name="onb_warning">Flashing a custom ROM can erase your data and void your warranty. Always back up first.</string>
+    <string name="onb_continue">Continue</string>
+    <string name="onb_root_requesting">Waiting for superuser permission…</string>
+
+    <!-- Language and mode selection -->
+    <string name="language_title">Language</string>
+    <string name="mode_title">Mode</string>
+    <string name="mode_suggest_title">Suggestion mode (no root)</string>
+    <string name="mode_suggest_desc">ForgeROM never changes anything on your device. It only finds ROMs and recoveries and shows you where to get them.</string>
+    <string name="mode_root_title">Root mode</string>
+    <string name="mode_root_desc">Asks for superuser (su) permission. In this version it only checks root access; automatic installation will come in a later version.</string>
+
+    <!-- Root status -->
+    <string name="root_granted">Root access granted ✓</string>
+    <string name="root_denied">Root access was not granted, or this device is not rooted. Staying in suggestion mode.</string>
+    <string name="root_recheck">Check root access again</string>
+
+    <!-- Main screen banners -->
+    <string name="banner_suggest_title">Suggestion mode</string>
+    <string name="banner_suggest_text">ForgeROM makes no changes to your device. Back up your data and verify every step at its source before installing anything.</string>
+    <string name="banner_root_title">Root mode</string>
+    <string name="banner_root_text">Superuser access is granted. This version only checks root access, so results are the same as in suggestion mode. Back up your data and verify every step at its source.</string>
+
+    <!-- Device card -->
+    <string name="device_label_auto">DEVICE · AUTO-DETECTED</string>
+    <string name="device_label_manual">DEVICE · SELECTED MANUALLY</string>
+    <string name="device_detecting">Detecting device…</string>
+    <string name="device_android">Android %1$s (API %2$d)</string>
+    <string name="device_soc">SoC: %1$s</string>
+    <string name="device_change">Change device</string>
+    <string name="device_use_detected">Use detected device</string>
+
+    <!-- API key -->
+    <string name="api_key_label">Anthropic API key</string>
+    <string name="api_key_local_note">Your key is stored encrypted, only on this device.</string>
+    <string name="api_key_saved">API key saved ✓</string>
+    <string name="api_key_change">Change</string>
+    <string name="api_key_done">Done</string>
+    <string name="api_guide_toggle">How do I get an API key?</string>
+    <string name="api_guide_step1">1. Sign in or create an account at console.anthropic.com.</string>
+    <string name="api_guide_step2">2. Open Settings → Billing and add credits. A Claude Pro or Max subscription does not include API credits.</string>
+    <string name="api_guide_step3">3. Open Settings → API Keys and tap Create Key.</string>
+    <string name="api_guide_step4">4. Copy the key (it starts with sk-ant-) and paste it above. It is shown only once.</string>
+    <string name="api_guide_cost">Each search uses a small amount of your credits.</string>
+    <string name="api_guide_open">Open Anthropic Console</string>
+
+    <!-- Search -->
+    <string name="search_button">Find ROMs &amp; Recoveries</string>
+    <string name="search_button_busy">Searching…</string>
+    <string name="search_step_1">Analyzing device info…</string>
+    <string name="search_step_2">Checking bootloader status…</string>
+    <string name="search_step_3">Scanning XDA and official sources…</string>
+    <string name="search_step_4">Verifying results…</string>
+
+    <!-- Results -->
+    <string name="section_roms">Custom ROMs</string>
+    <string name="section_recoveries">Custom recoveries</string>
+    <string name="no_roms">No reliable ROM found.</string>
+    <string name="no_recoveries">No reliable recovery found.</string>
+    <string name="android_version_fmt">Android %1$s</string>
+    <string name="open_source">Open source</string>
+    <string name="status_official">official</string>
+    <string name="status_unofficial">unofficial</string>
+    <string name="status_abandoned">abandoned</string>
+
+    <!-- Bootloader -->
+    <string name="bootloader_unlockable">✓ Bootloader can be unlocked</string>
+    <string name="bootloader_conditional">⚠ Bootloader can only be unlocked under certain conditions</string>
+    <string name="bootloader_unknown">\? Bootloader status could not be verified</string>
+    <string name="locked_title">🔒 Bootloader cannot be unlocked</string>
+    <string name="locked_default_notes">Installing a custom ROM requires an unlocked bootloader, which does not seem possible for this model.</string>
+    <string name="locked_hint">If the detected device is wrong, or you want to search for another model, select it manually.</string>
+    <string name="locked_button">Select model manually</string>
+
+    <!-- Manual device picker -->
+    <string name="picker_title">Select your device</string>
+    <string name="picker_hint">Marketing name, model or codename (e.g. S20 FE, r8q)</string>
+    <string name="picker_start">Start typing to search.</string>
+    <string name="picker_empty">No results. Try a different spelling.</string>
+
+    <!-- Errors -->
+    <string name="err_no_api_key">Enter an API key first.</string>
+    <string name="err_api">API error: %1$s</string>
+    <string name="err_no_result">The AI did not return a valid result. Please try again.</string>
+    <string name="err_generic">Something went wrong: %1$s</string>
+
+    <!-- Free sources (no API key) -->
+    <string name="free_step_1">Checking LineageOS…</string>
+    <string name="free_step_2">Checking OrangeFox…</string>
+    <string name="free_step_3">Checking TWRP…</string>
+    <string name="note_lineage">Official LineageOS builds for %1$s. The wiki has the install guide and download links.</string>
+    <string name="note_orangefox">Official OrangeFox Recovery for %1$s: downloads, install guide and changelog.</string>
+    <string name="note_twrp">Official TWRP downloads for this device.</string>
+    <string name="bl_lineage_ok">LineageOS officially supports this device, so its bootloader can normally be unlocked. Check your exact variant, region and carrier.</string>
+    <string name="bl_lineage_locked">The LineageOS wiki lists this device as not unlockable.</string>
+    <string name="bl_unknown_free">No free source has bootloader information for this device. AI deep search can check it.</string>
+    <string name="warn_model_not_listed">Your model number (%1$s) is not in LineageOS\'s supported list for this codename. Your variant may not be supported.</string>
+    <string name="nothing_found">No free source lists this device. Try the AI deep search below, or select another model.</string>
+
+    <!-- AI deep search (optional) -->
+    <string name="ai_title">AI deep search (optional)</string>
+    <string name="ai_desc">Searches the web for unofficial ROMs and XDA threads and double-checks the bootloader status. Needs your own Anthropic API key, which is paid per use. The search above is free and needs no key.</string>
+    <string name="ai_button">Search with AI</string>
+    <string name="ai_button_busy">Searching with AI…</string>
+
+    <!-- Saved results, offline, crDroid, reporting (0.4) -->
+    <string name="cache_note">Showing saved results from %1$s.</string>
+    <string name="search_again">Search again</string>
+    <string name="err_network">Could not reach the internet. Check your connection and try again.</string>
+    <string name="note_crdroid">Official crDroid builds for this device. Last build: %1$s.</string>
+    <string name="bl_projects_ok">Official ROM or recovery projects support this device, so its bootloader can normally be unlocked. Check your exact variant, region and carrier.</string>
+    <string name="report_button">Report a problem</string>
+    <string name="report_note">Opens GitHub with your device details filled in. Nothing is sent until you submit it yourself.</string>
+
+    <!-- Updates, crash report, download, install checklist (0.5) -->
+    <string name="update_available">ForgeROM %1$s is available.</string>
+    <string name="update_open">View release</string>
+    <string name="update_later">Not now</string>
+    <string name="settings_updates">Check for updates automatically</string>
+    <string name="settings_updates_desc">Looks at the ForgeROM releases page on GitHub once a day. Only a normal web request is made; no personal data is sent.</string>
+    <string name="crash_title">ForgeROM closed unexpectedly last time.</string>
+    <string name="crash_text">You can send a report to help fix it. You will see everything before it is sent.</string>
+    <string name="crash_report">Report</string>
+    <string name="crash_dismiss">Dismiss</string>
+    <string name="action_cancel">Cancel</string>
+    <string name="download_button">Download</string>
+    <string name="download_size">Download (%1$s)</string>
+    <string name="download_confirm_title">Download this file?</string>
+    <string name="download_confirm_text">%1$s (%2$s) will be saved to your Downloads folder. Use Wi-Fi if you can. ForgeROM does not install it.</string>
+    <string name="download_checksum">SHA-256: %1$s</string>
+    <string name="download_confirm_ok">Download</string>
+    <string name="download_started">Download started. Check your notifications. The file is saved in your Downloads folder.</string>
+    <string name="download_failed">Could not start the download. Use the source button to download it in your browser.</string>
+    <string name="guide_button">Read the install checklist</string>
+    <string name="guide_title">Before you install</string>
+    <string name="guide_intro">ForgeROM never changes your phone. This is a general checklist; always follow the official guide for your device.</string>
+    <string name="guide_step_1">Back up everything you care about (photos, messages, app data). Installing a custom ROM erases your phone.</string>
+    <string name="guide_step_2">Charge the phone to at least 80 percent and use a good USB cable. Most devices need a computer for unlocking and flashing.</string>
+    <string name="guide_step_3">Check that your exact model number, region and carrier are listed as supported. Flashing a ROM made for another variant can brick the phone.</string>
+    <string name="guide_step_4">Open the ROM\'s official installation guide (the source button on its card) and read it completely before you start. Follow that guide, not random videos.</string>
+    <string name="guide_step_5">Unlock the bootloader if the guide asks for it. This erases all data and can void the warranty. Some brands require a waiting period or an account.</string>
+    <string name="guide_step_6">Install the recommended recovery. Many ROMs include their own; otherwise use one of the recoveries from the results.</string>
+    <string name="guide_step_7">Flash the ROM exactly as the guide says. If a SHA-256 checksum is shown, verify the downloaded file against it first.</string>
+    <string name="guide_step_8">The first boot can take several minutes. If the phone does not start, stay calm: go back to recovery and follow the troubleshooting section of the guide.</string>
+</resources>

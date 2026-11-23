@@ -7,7 +7,7 @@
 -->
 <resources>
     <string name="app_name" translatable="false">ForgeROM</string>
-    <string name="version_label" translatable="false">0.5 Beta</string>
+    <string name="version_label" translatable="false">0.6 Beta</string>
 
     <!-- Common -->
     <string name="hero_tagline">Custom ROM installation, made easier</string>
@@ -164,4 +164,46 @@
     <string name="guide_step_6">Install the recommended recovery. Many ROMs include their own; otherwise use one of the recoveries from the results.</string>
     <string name="guide_step_7">Flash the ROM exactly as the guide says. If a SHA-256 checksum is shown, verify the downloaded file against it first.</string>
     <string name="guide_step_8">The first boot can take several minutes. If the phone does not start, stay calm: go back to recovery and follow the troubleshooting section of the guide.</string>
+
+    <!-- Phone check (0.6) -->
+    <string name="details_button">Phone check</string>
+    <string name="details_title">Phone check</string>
+    <string name="details_intro">Reads a few settings from this phone to see whether it is ready. Nothing is changed and nothing is sent anywhere.</string>
+    <string name="details_checking">Checking this phone…</string>
+    <string name="details_refresh">Check again</string>
+    <string name="details_copy">Copy details</string>
+    <string name="details_copied">Details copied.</string>
+    <string name="details_technical">Technical details</string>
+    <string name="check_battery">Battery</string>
+    <string name="check_storage">Free storage</string>
+    <string name="check_devopts">Developer options</string>
+    <string name="check_usbdebug">USB debugging</string>
+    <string name="check_oemunlock">OEM unlocking</string>
+    <string name="check_bootloader">Bootloader</string>
+    <string name="check_ab">A/B partitions</string>
+    <string name="check_treble">Project Treble</string>
+    <string name="check_dynamic">Dynamic partitions</string>
+    <string name="check_abi">CPU architecture</string>
+    <string name="check_patch">Security patch</string>
+    <string name="check_connection">Connection</string>
+    <string name="value_yes">Yes</string>
+    <string name="value_no">No</string>
+    <string name="value_unknown">Unknown</string>
+    <string name="value_on">On</string>
+    <string name="value_off">Off</string>
+    <string name="value_locked">Locked</string>
+    <string name="value_unlocked">Unlocked</string>
+    <string name="value_not_supported">Not supported</string>
+    <string name="value_wifi">Wi-Fi</string>
+    <string name="value_mobile">Mobile data</string>
+    <string name="value_offline">Offline</string>
+    <string name="value_charging">%1$s (charging)</string>
+    <string name="hint_battery" formatted="false">Charge to at least 80% before flashing anything.</string>
+    <string name="hint_storage">Keep at least 8 GB free for the download and your backup.</string>
+    <string name="hint_devopts">Turn on Developer options (tap Build number seven times in Settings, About phone).</string>
+    <string name="hint_usbdebug">Turn on USB debugging in Developer options.</string>
+    <string name="hint_oem_off">Turn on OEM unlocking in Developer options. If it is greyed out, the bootloader may not be unlockable.</string>
+    <string name="hint_oem_unsupported">This phone says it does not support OEM unlocking.</string>
+    <string name="hint_bootloader_locked">The bootloader is locked. Unlocking it erases all data.</string>
+    <string name="hint_connection">Large downloads are better on Wi-Fi.</string>
 </resources>

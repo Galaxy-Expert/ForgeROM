@@ -1,7 +1,6 @@
-<?xml version="1.0" encoding="utf-8"?>
-<!-- ForgeROM - Türkçe -->
+<?xml version='1.0' encoding='utf-8'?>
 <resources>
-    <!-- Common -->
+    
     <string name="hero_tagline">Custom ROM kurulumunu kolaylaştırır</string>
     <string name="settings_title">Ayarlar</string>
     <string name="action_ok">Tamam</string>
@@ -9,14 +8,14 @@
     <string name="badge_mode_suggest">Öneri modu</string>
     <string name="badge_mode_root">Root modu</string>
 
-    <!-- Onboarding -->
+    
     <string name="onb_title">ForgeROM\'a hoş geldin</string>
     <string name="onb_subtitle">Telefonun için doğru custom ROM ve recovery\'yi bul.</string>
     <string name="onb_warning">Custom ROM kurmak verilerini silebilir ve garantiyi geçersiz kılabilir. Önce mutlaka yedek al.</string>
     <string name="onb_continue">Devam et</string>
     <string name="onb_root_requesting">Süper kullanıcı izni bekleniyor…</string>
 
-    <!-- Language and mode selection -->
+    
     <string name="language_title">Dil</string>
     <string name="mode_title">Mod</string>
     <string name="mode_suggest_title">Öneri modu (rootsuz)</string>
@@ -24,18 +23,18 @@
     <string name="mode_root_title">Root modu</string>
     <string name="mode_root_desc">Süper kullanıcı (su) izni ister. Bu sürümde sadece root erişimini kontrol eder; otomatik kurulum sonraki sürümlerde gelecek.</string>
 
-    <!-- Root status -->
+    
     <string name="root_granted">Root erişimi verildi ✓</string>
     <string name="root_denied">Root erişimi verilmedi ya da bu cihaz rootlu değil. Öneri modunda devam ediliyor.</string>
     <string name="root_recheck">Root erişimini tekrar kontrol et</string>
 
-    <!-- Main screen banners -->
+    
     <string name="banner_suggest_title">Öneri modu</string>
     <string name="banner_suggest_text">ForgeROM cihazında hiçbir değişiklik yapmaz. Bir şey kurmadan önce yedek al ve her adımı kaynağında doğrula.</string>
     <string name="banner_root_title">Root modu</string>
     <string name="banner_root_text">Süper kullanıcı erişimi verildi. Bu sürüm sadece root erişimini kontrol eder, sonuçlar öneri moduyla aynıdır. Yedek al ve her adımı kaynağında doğrula.</string>
 
-    <!-- Device card -->
+    
     <string name="device_label_auto">CİHAZ · OTOMATİK ALGILANDI</string>
     <string name="device_label_manual">CİHAZ · ELLE SEÇİLDİ</string>
     <string name="device_detecting">Cihaz algılanıyor…</string>
@@ -44,7 +43,7 @@
     <string name="device_change">Cihazı değiştir</string>
     <string name="device_use_detected">Algılananı kullan</string>
 
-    <!-- API key -->
+    
     <string name="api_key_label">Anthropic API anahtarı</string>
     <string name="api_key_local_note">Anahtarın şifrelenerek sadece bu cihazda saklanır.</string>
     <string name="api_key_saved">API anahtarı kayıtlı ✓</string>
@@ -58,7 +57,7 @@
     <string name="api_guide_cost">Her arama kredinden küçük bir miktar harcar.</string>
     <string name="api_guide_open">Anthropic Console\'u aç</string>
 
-    <!-- Search -->
+    
     <string name="search_button">ROM ve Recovery Bul</string>
     <string name="search_button_busy">Aranıyor…</string>
     <string name="search_step_1">Cihaz bilgileri analiz ediliyor…</string>
@@ -66,7 +65,7 @@
     <string name="search_step_3">XDA ve resmi kaynaklar taranıyor…</string>
     <string name="search_step_4">Sonuçlar doğrulanıyor…</string>
 
-    <!-- Results -->
+    
     <string name="section_roms">Custom ROM\'lar</string>
     <string name="section_recoveries">Custom recovery\'ler</string>
     <string name="no_roms">Güvenilir bir ROM bulunamadı.</string>
@@ -77,7 +76,7 @@
     <string name="status_unofficial">gayriresmi</string>
     <string name="status_abandoned">terk edilmiş</string>
 
-    <!-- Bootloader -->
+    
     <string name="bootloader_unlockable">✓ Bootloader kilidi açılabilir</string>
     <string name="bootloader_conditional">⚠ Bootloader yalnızca koşullu açılabilir</string>
     <string name="bootloader_unknown">\? Bootloader durumu doğrulanamadı</string>
@@ -86,19 +85,19 @@
     <string name="locked_hint">Algılanan cihaz yanlışsa ya da başka bir model için aramak istersen modeli elle seçebilirsin.</string>
     <string name="locked_button">Manuel model seç</string>
 
-    <!-- Manual device picker -->
+    
     <string name="picker_title">Cihazını seç</string>
     <string name="picker_hint">Ticari ad, model veya kod adı (ör. S20 FE, r8q)</string>
     <string name="picker_start">Aramak için yazmaya başla.</string>
     <string name="picker_empty">Sonuç bulunamadı. Farklı bir yazılış dene.</string>
 
-    <!-- Errors -->
+    
     <string name="err_no_api_key">Önce bir API anahtarı gir.</string>
     <string name="err_api">API hatası: %1$s</string>
     <string name="err_no_result">Yapay zeka geçerli bir sonuç döndürmedi. Lütfen tekrar dene.</string>
     <string name="err_generic">Bir şeyler ters gitti: %1$s</string>
 
-    <!-- Free sources (no API key) -->
+    
     <string name="free_step_1">LineageOS kontrol ediliyor…</string>
     <string name="free_step_2">OrangeFox kontrol ediliyor…</string>
     <string name="free_step_3">TWRP kontrol ediliyor…</string>
@@ -111,13 +110,13 @@
     <string name="warn_model_not_listed">Model numaran (%1$s), LineageOS\'un bu kod adı için desteklediği modeller arasında yok. Varyantın desteklenmiyor olabilir.</string>
     <string name="nothing_found">Ücretsiz kaynakların hiçbirinde bu cihaz yok. Aşağıdaki yapay zeka derin aramasını dene ya da başka bir model seç.</string>
 
-    <!-- AI deep search (optional) -->
+    
     <string name="ai_title">Yapay zeka ile derin arama (isteğe bağlı)</string>
     <string name="ai_desc">Web\'de gayriresmi ROM\'ları ve XDA konularını arar, bootloader durumunu tekrar kontrol eder. Kendi Anthropic API anahtarın gerekir, kullandıkça ücretlidir. Yukarıdaki arama ücretsizdir ve anahtar istemez.</string>
     <string name="ai_button">Yapay zeka ile ara</string>
     <string name="ai_button_busy">Yapay zeka arıyor…</string>
 
-    <!-- Saved results, offline, crDroid, reporting (0.4) -->
+    
     <string name="cache_note">Kayıtlı sonuçlar gösteriliyor (%1$s).</string>
     <string name="search_again">Yeniden ara</string>
     <string name="err_network">İnternete ulaşılamadı. Bağlantını kontrol edip tekrar dene.</string>
@@ -126,7 +125,7 @@
     <string name="report_button">Sorun bildir</string>
     <string name="report_note">Cihaz bilgilerin doldurulmuş olarak GitHub\'ı açar. Sen kendin göndermeden hiçbir şey gönderilmez.</string>
 
-    <!-- Updates, crash report, download, install checklist (0.5) -->
+    
     <string name="update_available">ForgeROM %1$s yayınlandı.</string>
     <string name="update_open">Sürümü gör</string>
     <string name="update_later">Şimdi değil</string>
@@ -156,4 +155,44 @@
     <string name="guide_step_6">Önerilen recovery\'yi kur. Birçok ROM kendi recovery\'sini içerir, yoksa sonuçlardaki recovery\'lerden birini kullan.</string>
     <string name="guide_step_7">ROM\'u rehberde yazdığı gibi kur. SHA-256 sağlama toplamı gösteriliyorsa önce indirdiğin dosyayı onunla doğrula.</string>
     <string name="guide_step_8">İlk açılış birkaç dakika sürebilir. Telefon açılmazsa sakin ol: recovery\'ye dön ve rehberin sorun giderme bölümünü izle.</string>
+<string name="details_button">Telefon kontrolü</string>
+    <string name="details_title">Telefon kontrolü</string>
+    <string name="details_intro">Telefonun hazır olup olmadığını görmek için bu telefondan birkaç ayarı okur. Hiçbir şey değiştirilmez ve hiçbir yere gönderilmez.</string>
+    <string name="details_checking">Telefon kontrol ediliyor…</string>
+    <string name="details_refresh">Tekrar kontrol et</string>
+    <string name="details_copy">Ayrıntıları kopyala</string>
+    <string name="details_copied">Ayrıntılar kopyalandı.</string>
+    <string name="details_technical">Teknik ayrıntılar</string>
+    <string name="check_battery">Pil</string>
+    <string name="check_storage">Boş alan</string>
+    <string name="check_devopts">Geliştirici seçenekleri</string>
+    <string name="check_usbdebug">USB hata ayıklama</string>
+    <string name="check_oemunlock">OEM kilit açma</string>
+    <string name="check_bootloader">Bootloader</string>
+    <string name="check_ab">A/B bölümleme</string>
+    <string name="check_treble">Project Treble</string>
+    <string name="check_dynamic">Dinamik bölümler</string>
+    <string name="check_abi">İşlemci mimarisi</string>
+    <string name="check_patch">Güvenlik yaması</string>
+    <string name="check_connection">Bağlantı</string>
+    <string name="value_yes">Evet</string>
+    <string name="value_no">Hayır</string>
+    <string name="value_unknown">Bilinmiyor</string>
+    <string name="value_on">Açık</string>
+    <string name="value_off">Kapalı</string>
+    <string name="value_locked">Kilitli</string>
+    <string name="value_unlocked">Kilidi açık</string>
+    <string name="value_not_supported">Desteklenmiyor</string>
+    <string name="value_wifi">Wi-Fi</string>
+    <string name="value_mobile">Mobil veri</string>
+    <string name="value_offline">Çevrimdışı</string>
+    <string name="value_charging">%1$s (şarjda)</string>
+    <string name="hint_battery" formatted="false">Bir şey kurmadan önce en az %80 şarj et.</string>
+    <string name="hint_storage">İndirme ve yedek için en az 8 GB boş alan bırak.</string>
+    <string name="hint_devopts">Geliştirici seçeneklerini aç (Ayarlar, Telefon hakkında bölümünde Yapı numarasına yedi kez dokun).</string>
+    <string name="hint_usbdebug">Geliştirici seçeneklerinden USB hata ayıklamayı aç.</string>
+    <string name="hint_oem_off">Geliştirici seçeneklerinde OEM kilit açmayı aç. Gri ve seçilemiyorsa bootloader kilidi açılamıyor olabilir.</string>
+    <string name="hint_oem_unsupported">Bu telefon OEM kilit açmayı desteklemediğini bildiriyor.</string>
+    <string name="hint_bootloader_locked">Bootloader kilitli. Kilidi açmak tüm verileri siler.</string>
+    <string name="hint_connection">Büyük indirmeleri Wi-Fi ile yapmak daha iyi.</string>
 </resources>

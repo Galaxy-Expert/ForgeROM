@@ -16,6 +16,8 @@ import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.Arrangement
 import androidx.compose.foundation.layout.Box
 import androidx.compose.foundation.layout.Column
+import androidx.compose.foundation.layout.ExperimentalLayoutApi
+import androidx.compose.foundation.layout.FlowRow
 import androidx.compose.foundation.layout.PaddingValues
 import androidx.compose.foundation.layout.Row
 import androidx.compose.foundation.layout.Spacer
@@ -112,17 +114,21 @@ class Actions(
     val onCloseGuide: () -> Unit,
     val onDismissUpdate: () -> Unit,
     val onDismissCrash: () -> Unit,
-    val onSetUpdateCheck: (Boolean) -> Unit
+    val onSetUpdateCheck: (Boolean) -> Unit,
+    val onOpenDetails: () -> Unit,
+    val onCloseDetails: () -> Unit,
+    val onRefreshDetails: () -> Unit
 )
 
 private const val CONSOLE_URL = "https://console.anthropic.com/settings/keys"
 
 @Composable
 fun ForgeRomApp(state: UiState, a: Actions) {
-    BackHandler(enabled = state.screen == Screen.PICKER || state.screen == Screen.SETTINGS || state.screen == Screen.GUIDE) {
+    BackHandler(enabled = state.screen == Screen.PICKER || state.screen == Screen.SETTINGS || state.screen == Screen.GUIDE || state.screen == Screen.DETAILS) {
         when (state.screen) {
             Screen.PICKER -> a.onClosePicker()
             Screen.GUIDE -> a.onCloseGuide()
+            Screen.DETAILS -> a.onCloseDetails()
             else -> a.onCloseSettings()
         }
     }
@@ -140,7 +146,8 @@ fun ForgeRomApp(state: UiState, a: Actions) {
             Screen.MAIN -> MainScreen(state, a)
             Screen.PICKER -> PickerScreen(state, a)
             Screen.SETTINGS -> SettingsScreen(state, a)
-            Screen.GUIDE -> GuideScreen(a.onCloseGuide)
+            Screen.GUIDE -> GuideScreen(a.onCloseGuide, a.onOpenDetails)
+            Screen.DETAILS -> DetailsScreen(state, a)
         }
     }
 }
@@ -172,7 +179,7 @@ private fun MainScreen(state: UiState, a: Actions) {
                 }
             }
             item { Box(Modifier.h()) { ModeBanner(state.mode) } }
-            item { Box(Modifier.h()) { DeviceCard(state, a.onOpenPicker, a.onUseDetected, a.onSearch) } }
+            item { Box(Modifier.h()) { DeviceCard(state, a.onOpenPicker, a.onUseDetected, a.onSearch, a.onOpenDetails) } }
             item {
                 Box(Modifier.h()) {
                     Button(
@@ -308,8 +315,15 @@ private fun ModeBanner(mode: AppMode) {
     }
 }
 
+@OptIn(ExperimentalLayoutApi::class)
 @Composable
-private fun DeviceCard(state: UiState, onOpenPicker: () -> Unit, onUseDetected: () -> Unit, onSearchAgain: () -> Unit) {
+private fun DeviceCard(
+    state: UiState,
+    onOpenPicker: () -> Unit,
+    onUseDetected: () -> Unit,
+    onSearchAgain: () -> Unit,
+    onPhoneCheck: () -> Unit
+) {
     Card(
         shape = CardShape,
         colors = CardDefaults.cardColors(containerColor = MaterialTheme.colorScheme.surfaceContainerLow),
@@ -339,8 +353,9 @@ private fun DeviceCard(state: UiState, onOpenPicker: () -> Unit, onUseDetected: 
                     d.soc?.let { Text(stringResource(R.string.device_soc, it), style = MaterialTheme.typography.bodySmall) }
                 }
             }
-            Row(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
+            FlowRow(horizontalArrangement = Arrangement.spacedBy(4.dp)) {
                 TextButton(onClick = onOpenPicker) { Text(stringResource(R.string.device_change)) }
+                TextButton(onClick = onPhoneCheck) { Text(stringResource(R.string.details_button)) }
                 if (state.manual != null) TextButton(onClick = onUseDetected) { Text(stringResource(R.string.device_use_detected)) }
                 if (state.cachedAt != null) {
                     TextButton(onClick = onSearchAgain, enabled = !state.searching) { Text(stringResource(R.string.search_again)) }

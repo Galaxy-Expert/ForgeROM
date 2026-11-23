@@ -46,7 +46,10 @@ class MainActivity : AppCompatActivity() {
                         onCloseGuide = vm::closeGuide,
                         onDismissUpdate = vm::dismissUpdate,
                         onDismissCrash = vm::dismissCrash,
-                        onSetUpdateCheck = vm::setUpdateCheck
+                        onSetUpdateCheck = vm::setUpdateCheck,
+                        onOpenDetails = vm::openDetails,
+                        onCloseDetails = vm::closeDetails,
+                        onRefreshDetails = vm::refreshPhone
                     )
                 )
             }

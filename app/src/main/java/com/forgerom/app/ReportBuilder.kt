@@ -33,6 +33,10 @@ object ReportBuilder {
             appendLine("- Android: ${d.androidVersion} (API ${d.sdk})")
             d.soc?.let { appendLine("- SoC: $it") }
         }
+        // Only if the user ran the phone check: the bootloader / partition properties the phone reports.
+        state.phone?.technical?.forEach { (key, value) ->
+            if (key.startsWith("ro.") || key.startsWith("sys.")) appendLine("- $key: $value")
+        }
         appendLine()
         appendLine("### Searched device")
         appendLine("- ${state.displayName ?: "unknown"}")

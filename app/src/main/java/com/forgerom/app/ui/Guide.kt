@@ -13,11 +13,13 @@ import androidx.compose.foundation.layout.size
 import androidx.compose.foundation.layout.statusBarsPadding
 import androidx.compose.foundation.rememberScrollState
 import androidx.compose.foundation.shape.CircleShape
+import androidx.compose.foundation.shape.RoundedCornerShape
 import androidx.compose.foundation.verticalScroll
 import androidx.compose.material3.ButtonDefaults
 import androidx.compose.material3.Card
 import androidx.compose.material3.CardDefaults
 import androidx.compose.material3.MaterialTheme
+import androidx.compose.material3.OutlinedButton
 import androidx.compose.material3.Surface
 import androidx.compose.material3.Text
 import androidx.compose.material3.TextButton
@@ -37,7 +39,7 @@ private val GuideSteps = listOf(
 
 /** A read-only checklist of the general steps before installing a custom ROM. It changes nothing on the phone. */
 @Composable
-internal fun GuideScreen(onBack: () -> Unit) {
+internal fun GuideScreen(onBack: () -> Unit, onPhoneCheck: () -> Unit) {
     Surface(Modifier.fillMaxSize(), color = MaterialTheme.colorScheme.background) {
         Column(Modifier.fillMaxSize().verticalScroll(rememberScrollState())) {
             GradientHeader {
@@ -71,6 +73,9 @@ internal fun GuideScreen(onBack: () -> Unit) {
                             Text(stringResource(res), Modifier.weight(1f), style = MaterialTheme.typography.bodyMedium)
                         }
                     }
+                }
+                OutlinedButton(onClick = onPhoneCheck, shape = RoundedCornerShape(16.dp)) {
+                    Text(stringResource(R.string.details_button))
                 }
                 Spacer(Modifier.navigationBarsPadding().height(24.dp))
             }

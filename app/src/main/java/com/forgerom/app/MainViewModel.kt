@@ -16,6 +16,8 @@ import com.forgerom.app.device.BootloaderPolicy
 import com.forgerom.app.device.CatalogEntry
 import com.forgerom.app.device.DeviceCatalog
 import com.forgerom.app.device.DeviceInfo
+import com.forgerom.app.device.PhoneChecker
+import com.forgerom.app.device.PhoneInfo
 import com.forgerom.app.sources.FreeSources
 import com.forgerom.app.sources.SourceParsers
 import kotlinx.coroutines.Dispatchers
@@ -30,7 +32,7 @@ import kotlinx.coroutines.withContext
 import okhttp3.OkHttpClient
 import java.util.concurrent.TimeUnit
 
-enum class Screen { ONBOARDING, MAIN, PICKER, SETTINGS, GUIDE }
+enum class Screen { ONBOARDING, MAIN, PICKER, SETTINGS, GUIDE, DETAILS }
 
 /** SUGGEST = no root, never changes the device. ROOT = asks for su permission. */
 enum class AppMode { SUGGEST, ROOT }
@@ -57,6 +59,9 @@ data class UiState(
     val update: UpdateInfo? = null,            // a newer ForgeROM release exists
     val updateCheckEnabled: Boolean = true,
     val crash: String? = null,                 // summary of a crash from the previous run
+    val phone: PhoneInfo? = null,              // result of the phone check
+    val phoneChecking: Boolean = false,
+    val returnTo: Screen = Screen.MAIN,        // where the back button of the phone check goes
     val error: UiError? = null,
     val pickerQuery: String = "",
     val pickerResults: List<CatalogEntry> = emptyList(),
@@ -206,6 +211,27 @@ class MainViewModel(app: Application) : AndroidViewModel(app) {
 
     fun openGuide() = _state.update { it.copy(screen = Screen.GUIDE) }
     fun closeGuide() = _state.update { it.copy(screen = Screen.MAIN) }
+
+    // ---- Phone check ----
+
+    fun openDetails() {
+        _state.update { it.copy(screen = Screen.DETAILS, returnTo = if (it.screen == Screen.GUIDE) Screen.GUIDE else Screen.MAIN) }
+        refreshPhone()
+    }
+
+    fun closeDetails() = _state.update { it.copy(screen = it.returnTo) }
+
+    fun refreshPhone() {
+        _state.update { it.copy(phoneChecking = true) }
+        viewModelScope.launch {
+            val info = try {
+                withContext(Dispatchers.IO) { PhoneChecker.collect(getApplication<Application>()) }
+            } catch (e: Exception) {
+                null
+            }
+            _state.update { it.copy(phone = info ?: it.phone, phoneChecking = false) }
+        }
+    }
 
     // ---- Crash report ----
 
